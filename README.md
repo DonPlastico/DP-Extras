@@ -1,7 +1,7 @@
 <p align="center">
 <h1 align="center">DP-Extras - Sistema de Extras/Livery's para Vehículos (Police/EMS/Mechanic/Sheriff...) (QBCore)</h1>
 
-<img width="960" height="auto" align="center" alt="DP-Animations Logo" src="Images (Can Remove it if u want)/IMAGE.png" />
+<img width="960" height="auto" align="center" alt="DP-Animations Logo" src="Images (Can Remove it if u want)/Miniaturas YT.png" />
 
 </p>
 
@@ -182,8 +182,8 @@ Aquí tienes una lista de las vistas previas de tu script.
 <p align="center">
 <summary><h2 align="center">Video Demostrativo</h2></summary>
 
-<a href="https://youtu.be/o8tCNLDl1ZA">
-<img width="959" height="auto" alt="Video Demostrativo" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" src="https://img.youtube.com/vi/o8tCNLDl1ZA/maxresdefault.jpg" />
+<a href="">
+<img width="959" height="auto" alt="Video Demostrativo" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" src="Images (Can Remove it if u want)/Miniaturas YT.png" />
 </a>
 
 </p>
