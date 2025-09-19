@@ -103,10 +103,10 @@ El script requiere las siguientes dependencias (deben estar instaladas y configu
 <summary><h2 align="center"> 🖥️ Mostrar estructura completa y descripción</h2></summary>
 
 DP-Extras/<br>
-├── 🔵 fxmanifest.lua
-├── 🔵 config.lua
-├── 🔵 client.lua
-└── 📖 README.md
+├── 🔵 fxmanifest.lua<br>
+├── 🔵 config.lua<br>
+├── 🔵 client.lua<br>
+└── 📖 README.md<br>
 
 </div>
 
