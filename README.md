@@ -166,7 +166,7 @@ Aquí tienes una lista de las vistas previas de tu script.
 <p align="center">
 <summary><h2 align="center">Menú Principal</h2></summary>
 
-<img width="277" height="auto" alt="image" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" src="Images (Can Remove it if u want)/Menú Principal.png" />
+<img width="959" height="auto" alt="image" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" src="Images (Can Remove it if u want)/Menú Principal.png" />
 
 </p>
 </details>
@@ -174,7 +174,7 @@ Aquí tienes una lista de las vistas previas de tu script.
 <p align="center">
 <summary><h2 align="center">Selección de Livery's</h2></summary>
 
-<img width="277" height="auto" alt="image" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" src="Images (Can Remove it if u want)/Selección de Livery&apos;s.png" />
+<img width="500" height="auto" alt="image" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" src="Images (Can Remove it if u want)/Selección de Livery&apos;s.png" />
 
 </p>
 </details>
