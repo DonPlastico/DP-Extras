@@ -180,6 +180,14 @@ Aquí tienes una lista de las vistas previas de tu script.
 </details>
 <details>
 <p align="center">
+<summary><h2 align="center">Selección de Extras</h2></summary>
+
+<img width="500" height="auto" alt="image" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" src="Images (Can Remove it if u want)/extras.png" />
+
+</p>
+</details>
+<details>
+<p align="center">
 <summary><h2 align="center">Video Demostrativo</h2></summary>
 
 <a href="">
