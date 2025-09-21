@@ -21,7 +21,7 @@ DP-Extras es un sistema avanzado de gestión/personalización de vehículos de t
 - Permite activar/desactivar extras de vehículos policiales.<br>
 - Sistema para cambiar liveries y diseños de vehículos.<br>
 - Opciones para lavar y reparar vehículos con progress bars.<br>
-- Interfaz de menú intuitiva con QB-Menu.<br>
+- Interfaz de menú intuitiva con DP-Menu.<br>
 - Soporte para ambos sistemas de texto: DP-TextUI y qb-core.<br>
 
 </details>
@@ -39,7 +39,7 @@ DP-Extras es un sistema avanzado de gestión/personalización de vehículos de t
 ✅ Gestión completa de extras de vehículos (activar/desactivar).<br>
 ✅ Cambio de liveries y diseños de vehículos.<br>
 ✅ Lavado y reparación de vehículos con animaciones.<br>
-✅ Interfaz de menú moderna con QB-Menu.<br>
+✅ Interfaz de menú moderna con DP-Menu.<br>
 ✅ Soporte configurable para DP-TextUI o qb-core text.<br>
 ✅ Tiempos configurables para todas las acciones.<br>
 ✅ Restricción por jobs/gangs/civil.<br>
@@ -52,7 +52,7 @@ DP-Extras es un sistema avanzado de gestión/personalización de vehículos de t
 <details>
 <summary><h2 align="center">Requisitos previos</h2></summary>
 - Servidor FiveM con QBCore instalado.<br>
-- QB-Menu para la interfaz de menús.<br>
+- DP-Menu para la interfaz de menús.<br>
 - Opcional: DP-TextUI para texto personalizado.<br>
 
 </details>
@@ -73,7 +73,7 @@ El script requiere las siguientes dependencias (deben estar instaladas y configu
 | Recurso                                                                          | Descripción                   | Enlace                                                    |
 | -------------------------------------------------------------------------------- | ----------------------------- | --------------------------------------------------------- |
 | <img src="https://placehold.co/20x20/555555/FFFFFF?text=Q" alt="QB"> qb-core     | Framework principal           | [🔗 GitHub](https://github.com/qbcore-framework/qb-core)  |
-| <img src="https://placehold.co/20x20/555555/FFFFFF?text=M" alt="Menu"> qb-menu   | Sistema de menús              | [🔗 GitHub](https://github.com/qbcore-framework/qb-menu)  |
+| <img src="https://placehold.co/20x20/555555/FFFFFF?text=M" alt="Menu"> DP-Menu   | Sistema de menús              | [🔗 GitHub](https://github.com/qbcore-framework/DP-Menu)  |
 | <img src="https://placehold.co/20x20/555555/FFFFFF?text=D" alt="DP"> DP-TextUI   | Texto personalizado (opcional)| [🔗 GitHub]()  |
 
 <div style="margin-top: 15px; background-color: #f8f9fa; padding: 10px; border-radius: 5px; border-left: 4px solid #6c757d;">
@@ -85,7 +85,7 @@ El script requiere las siguientes dependencias (deben estar instaladas y configu
 <summary><h2 align="center">Orden recomendado en server.cfg</h2></summary>
 ```cfg.<br>
    ensure qb-core
-   ensure qb-menu
+   ensure DP-Menu
    ensure DP-TextUI # Opcional
    ensure DP-Extras
   
@@ -112,9 +112,9 @@ DP-Extras/<br>
 
 | Archivo                    | Función Principal                   | Dependencias      |
 | -------------------------- | ----------------------------------- | ----------------- |
-| **fxmanifest.lua**         | Configuración principal del recurso | qb-core, qb-menu, DP-TextUI |
+| **fxmanifest.lua**         | Configuración principal del recurso | qb-core, DP-Menu, DP-TextUI |
 | **config.lua**             | Configuración completa del script   | - |
-| **client.lua**             | Lógica principal del cliente        | qb-core, qb-menu, DP-TextUI (Opcional) |
+| **client.lua**             | Lógica principal del cliente        | qb-core, DP-Menu, DP-TextUI (Opcional) |
 
 > ** 💡 Datos Técnicos:** Sistema optimizado con consumo mínimo de recursos (0.00-0.01ms) y máxima compatibilidad con QBCore.
 

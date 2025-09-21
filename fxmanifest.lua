@@ -12,6 +12,6 @@ client_scripts {
 
 dependencies {
     'qb-core',
-    'qb-menu',
+    'DP-Menu',
     'DP-TextUI'
 }

@@ -49,7 +49,6 @@ Config.Texts = {
     extrasOption = "Activar/Desactivar extras del vehículo", -- Opción para abrir el menú de extras
     washOption = "Limpiar el vehículo", -- Opción para lavar el vehículo
     repairOption = "Reparar el vehículo", -- Opción para reparar el vehículo
-    closeOption = "Cerrar", -- Opción para cerrar el menú
     backOption = "Volver", -- Opción para volver al menú anterior
 
     -- Textos de progreso
@@ -72,7 +71,6 @@ Config.Icons = {
     gears = "fa-solid fa-gears", -- Icono de engranajes
     soap = "fa-solid fa-soap", -- Icono de jabón
     wrench = "fa-solid fa-wrench", -- Icono de llave inglesa
-    close = "fa-solid fa-xmark", -- Icono de cerrar (X)
     back = "fa-solid fa-arrow-left", -- Icono de volver (flecha izquierda)
     paintBrush = "fa-solid fa-paint-brush", -- Icono de brocha de pintura
     toggleOn = "fa-solid fa-toggle-on", -- Icono de toggle on

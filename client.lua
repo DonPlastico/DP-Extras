@@ -225,16 +225,10 @@ function OpenVehicleMenu()
         params = {
             event = "dp-extras:repairVehicle"
         }
-    }, {
-        header = Config.Texts.closeOption,
-        icon = Config.Icons.close,
-        params = {
-            event = "qb-menu:closeMenu"
-        }
     }}
 
     currentMenu = "main"
-    exports['qb-menu']:openMenu(menu)
+    exports['DP-Menu']:openMenu(menu)
 end
 
 -- Menú de Livery's MEJORADO
@@ -293,7 +287,7 @@ function OpenLiveryMenu()
     })
 
     currentMenu = "livery"
-    exports['qb-menu']:openMenu(menu)
+    exports['DP-Menu']:openMenu(menu)
 end
 
 -- Menú de Extras
@@ -348,7 +342,7 @@ function OpenExtrasMenu()
     })
 
     currentMenu = "extras"
-    exports['qb-menu']:openMenu(menu)
+    exports['DP-Menu']:openMenu(menu)
 end
 
 -- Evento para toggle extra (MODIFICADO)
