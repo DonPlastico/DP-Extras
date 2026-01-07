@@ -5,12 +5,12 @@ Config.Marker = {
     type = 20, -- Tipo de marker (ver https://docs.fivem.net/docs/game-references/markers/)
     size = vector3(0.3, 0.3, 0.3), -- Tamaño del marker
     color = {r = 0, g = 0, b = 0, a = 255}, -- Color RGBA del marker
-    position = vector3(448.66, -970.38, 25.71), -- Cambia estas coordenadas a las que desees
+    position = vector3(461.87, -1016.78, 27.70), -- Cambia estas coordenadas a las que desees
     saltos = false, -- true = El marker tiene efecto de saltos, false = no tiene efecto
     sigue = false, -- true = El marker siempre mira a la camara, false = no lo hace
     rotacion = true, -- true = El marker siempre gira sobre si mismo, false = no lo hace
     drawDistance = 10.0, -- Distancia a la que se ve el marker
-    interactionDistance = 5.0 -- Distancia a la que se puede interactuar con el marker
+    interactionDistance = 2.0 -- Distancia máxima para interactuar y que se cierre el menú
 }
 
 -- Configuración de jobs

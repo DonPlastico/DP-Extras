@@ -1,9 +1,37 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local inZone = false
 local currentMenu = nil
-local activeTextUI = nil -- Para controlar el TextUI activo
+local activeTextUI = nil
+local PlayerJob = {} -- Variable para guardar el trabajo localmente
 
--- Función para mostrar texto (MODIFICADA)
+-- ==========================================================
+-- GESTIÓN DE JUGADOR Y JOB (OPTIMIZACIÓN)
+-- ==========================================================
+
+-- Obtener trabajo al iniciar
+AddEventHandler('onResourceStart', function(resourceName)
+    if (GetCurrentResourceName() ~= resourceName) then
+        return
+    end
+    local PlayerData = QBCore.Functions.GetPlayerData()
+    if PlayerData then
+        PlayerJob = PlayerData.job
+    end
+end)
+
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    local PlayerData = QBCore.Functions.GetPlayerData()
+    PlayerJob = PlayerData.job
+end)
+
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
+    PlayerJob = JobInfo
+end)
+
+-- ==========================================================
+-- FUNCIONES UI
+-- ==========================================================
+
 function ShowTextUI(text)
     if Config.UseDPTextUI then
         exports['DP-TextUI']:MostrarUI('dp_extras_menu', text, 'E', false)
@@ -12,7 +40,6 @@ function ShowTextUI(text)
     end
 end
 
--- Función para ocultar texto (MODIFICADA)
 function HideTextUI()
     if Config.UseDPTextUI then
         exports['DP-TextUI']:OcultarUI('dp_extras_menu')
@@ -21,11 +48,12 @@ function HideTextUI()
     end
 end
 
--- Función mejorada para detectar liveries
+-- ==========================================================
+-- LÓGICA DE VEHÍCULOS (LIVERIES Y EXTRAS)
+-- ==========================================================
+
 function GetVehicleLiveries(vehicle)
     local liveries = {}
-
-    -- Método 1: Liveries normales (GetVehicleLiveryCount)
     local numLiveries = GetVehicleLiveryCount(vehicle)
     if numLiveries > 0 then
         for i = 0, numLiveries - 1 do
@@ -37,8 +65,7 @@ function GetVehicleLiveries(vehicle)
         end
     end
 
-    -- Método 2: Liveries a través de modificaciones (para muchos vehículos civiles)
-    local numMods = GetNumVehicleMods(vehicle, 48) -- MOD_LIVERY = 48
+    local numMods = GetNumVehicleMods(vehicle, 48)
     if numMods > 0 then
         for i = 0, numMods - 1 do
             table.insert(liveries, {
@@ -49,9 +76,7 @@ function GetVehicleLiveries(vehicle)
         end
     end
 
-    -- Método 3: Verificar variaciones (para algunos vehículos)
     if numLiveries == 0 and numMods == 0 then
-        -- Intentar con variaciones comunes
         for i = 0, 10 do
             if GetVehicleModVariation(vehicle, 48) or DoesExtraExist(vehicle, i) then
                 table.insert(liveries, {
@@ -62,27 +87,21 @@ function GetVehicleLiveries(vehicle)
             end
         end
     end
-
     return liveries
 end
 
--- Función para aplicar livery según el tipo
 function ApplyVehicleLivery(vehicle, liveryData)
     if liveryData.type == "normal" then
         SetVehicleLivery(vehicle, liveryData.id)
     elseif liveryData.type == "mod" then
-        SetVehicleMod(vehicle, 48, liveryData.id, true) -- MOD_LIVERY = 48
+        SetVehicleMod(vehicle, 48, liveryData.id, true)
     elseif liveryData.type == "variation" then
-        -- Alternar extra o variación
         if DoesExtraExist(vehicle, liveryData.id) then
             SetVehicleExtra(vehicle, liveryData.id, 0)
         end
     end
-
     ForceVehicleUpdate(vehicle)
     Citizen.Wait(100)
-
-    -- Re-aplicar para asegurar
     if liveryData.type == "normal" then
         SetVehicleLivery(vehicle, liveryData.id)
     elseif liveryData.type == "mod" then
@@ -90,26 +109,19 @@ function ApplyVehicleLivery(vehicle, liveryData)
     end
 end
 
--- Función para forzar la actualización de extras
 function ForceVehicleUpdate(vehicle)
     if not DoesEntityExist(vehicle) then
         return
     end
-
     local health = GetVehicleEngineHealth(vehicle)
     local dirtLevel = GetVehicleDirtLevel(vehicle)
-
-    -- Pequeña reparación para forzar actualización
     SetVehicleFixed(vehicle)
     Citizen.Wait(50)
-
-    -- Restaurar valores originales
     SetVehicleEngineHealth(vehicle, health)
     SetVehicleBodyHealth(vehicle, health)
     SetVehicleDirtLevel(vehicle, dirtLevel)
 end
 
--- Función para toggle extra sin cerrar menú (MODIFICADA)
 function ToggleExtra(extraId, currentState)
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 then
@@ -118,35 +130,25 @@ function ToggleExtra(extraId, currentState)
 
     local newState = not currentState
     local extraValue = newState and 0 or 1
-
-    -- Mostrar progress bar según si está activando o desactivando
     local progressText = newState and Config.Texts.applyingExtra or Config.Texts.removingExtra
 
     ExecuteProgressBar(progressText, Config.ProgressTimes.extra, function()
-        -- Aplicar el cambio después de la progress bar
         SetVehicleExtra(vehicle, extraId, extraValue)
-
-        -- Forzar actualización
         ForceVehicleUpdate(vehicle)
-
-        -- Re-aplicar el cambio después de la actualización
         Citizen.Wait(100)
         SetVehicleExtra(vehicle, extraId, extraValue)
 
         local message = newState and Config.Texts.extraEnabled or Config.Texts.extraDisabled
         QBCore.Functions.Notify(message:gsub("{extraId}", extraId), 'success')
 
-        -- Actualizar el menú sin cerrarlo completamente
         if currentMenu == "extras" then
             Citizen.Wait(100)
             OpenExtrasMenu()
         end
     end)
-
     return newState
 end
 
--- Función para cambiar livery sin cerrar menú (MODIFICADA)
 function ChangeLivery(liveryData)
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 then
@@ -154,13 +156,9 @@ function ChangeLivery(liveryData)
     end
 
     ExecuteProgressBar(Config.Texts.applyingLivery, Config.ProgressTimes.livery, function()
-        -- Aplicar el cambio después de la progress bar
         ApplyVehicleLivery(vehicle, liveryData)
-
         local message = Config.Texts.liveryChanged:gsub("{liveryId}", liveryData.name)
         QBCore.Functions.Notify(message, 'success')
-
-        -- Actualizar el menú sin cerrarlo completamente
         if currentMenu == "livery" then
             Citizen.Wait(100)
             OpenLiveryMenu()
@@ -168,7 +166,6 @@ function ChangeLivery(liveryData)
     end)
 end
 
--- Función para ejecutar progress bar
 function ExecuteProgressBar(label, time, callback)
     QBCore.Functions.Progressbar("dp_extras_progress", label, time, false, true, {
         disableMovement = true,
@@ -176,17 +173,18 @@ function ExecuteProgressBar(label, time, callback)
         disableMouse = false,
         disableCombat = true
     }, {}, {}, {}, function()
-        -- Completado
         if callback then
             callback()
         end
     end, function()
-        -- Cancelado
         QBCore.Functions.Notify("Cancelado", "error")
     end)
 end
 
--- Función para abrir el menú principal
+-- ==========================================================
+-- MENÚS
+-- ==========================================================
+
 function OpenVehicleMenu()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 then
@@ -226,12 +224,10 @@ function OpenVehicleMenu()
             event = "dp-extras:repairVehicle"
         }
     }}
-
     currentMenu = "main"
     exports['DP-Menu']:openMenu(menu)
 end
 
--- Menú de Livery's MEJORADO
 function OpenLiveryMenu()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 then
@@ -242,22 +238,14 @@ function OpenLiveryMenu()
         header = Config.Texts.liveriesTitle,
         isMenuHeader = true
     }}
-
-    -- Obtener liveries usando la función mejorada
     local liveries = GetVehicleLiveries(vehicle)
     local currentLivery = GetVehicleLivery(vehicle)
     local currentMod = GetVehicleMod(vehicle, 48)
 
     if #liveries > 0 then
         for _, livery in ipairs(liveries) do
-            local isSelected = false
-
-            if livery.type == "normal" then
-                isSelected = (currentLivery == livery.id)
-            elseif livery.type == "mod" then
-                isSelected = (currentMod == livery.id)
-            end
-
+            local isSelected = (livery.type == "normal" and currentLivery == livery.id) or
+                                   (livery.type == "mod" and currentMod == livery.id)
             table.insert(menu, {
                 header = livery.name,
                 txt = (isSelected and Config.Texts.selected or Config.Texts.clickToSelect),
@@ -277,7 +265,6 @@ function OpenLiveryMenu()
             isMenuHeader = true
         })
     end
-
     table.insert(menu, {
         header = Config.Texts.backOption,
         icon = Config.Icons.back,
@@ -290,7 +277,6 @@ function OpenLiveryMenu()
     exports['DP-Menu']:openMenu(menu)
 end
 
--- Menú de Extras
 function OpenExtrasMenu()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 then
@@ -301,15 +287,12 @@ function OpenExtrasMenu()
         header = Config.Texts.extrasTitle,
         isMenuHeader = true
     }}
-
     local hasExtras = false
 
-    -- Verificar extras (del 1 al 14)
     for extraId = 1, 14 do
         if DoesExtraExist(vehicle, extraId) then
             hasExtras = true
             local isEnabled = IsVehicleExtraTurnedOn(vehicle, extraId) == 1
-
             table.insert(menu, {
                 header = "Extra " .. extraId,
                 txt = (isEnabled and Config.Texts.enabled or Config.Texts.disabled),
@@ -332,7 +315,6 @@ function OpenExtrasMenu()
             isMenuHeader = true
         })
     end
-
     table.insert(menu, {
         header = Config.Texts.backOption,
         icon = Config.Icons.back,
@@ -345,109 +327,105 @@ function OpenExtrasMenu()
     exports['DP-Menu']:openMenu(menu)
 end
 
--- Evento para toggle extra (MODIFICADO)
+-- ==========================================================
+-- EVENTOS
+-- ==========================================================
+
 RegisterNetEvent('dp-extras:toggleExtra', function(data)
     ToggleExtra(data.extraId, data.currentState)
 end)
-
--- Evento para cambiar livery (MODIFICADO)
 RegisterNetEvent('dp-extras:setLivery', function(data)
     ChangeLivery(data.liveryData)
 end)
-
--- Eventos para abrir menús
 RegisterNetEvent('dp-extras:openMainMenu', OpenVehicleMenu)
 RegisterNetEvent('dp-extras:openLiveryMenu', OpenLiveryMenu)
 RegisterNetEvent('dp-extras:openExtrasMenu', OpenExtrasMenu)
 
--- Evento para lavar vehículo (MODIFICADO)
 RegisterNetEvent('dp-extras:cleanVehicle', function()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 then
         return
     end
-
-    -- Ejecutar progress bar
     ExecuteProgressBar(Config.Texts.washing, Config.ProgressTimes.wash, function()
-        -- Acción completada
         SetVehicleDirtLevel(vehicle, 0.0)
         QBCore.Functions.Notify(Config.Texts.washed, 'success')
-
-        -- Reabrir el menú principal
         Citizen.Wait(300)
         OpenVehicleMenu()
     end)
 end)
 
--- Evento para reparar vehículo (MODIFICADO)
 RegisterNetEvent('dp-extras:repairVehicle', function()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 then
         return
     end
-
-    -- Ejecutar progress bar
     ExecuteProgressBar(Config.Texts.repairing, Config.ProgressTimes.repair, function()
-        -- Acción completada
         SetVehicleEngineHealth(vehicle, 1000.0)
         SetVehicleBodyHealth(vehicle, 1000.0)
         SetVehicleFixed(vehicle)
         QBCore.Functions.Notify(Config.Texts.repaired, 'success')
-
-        -- Reabrir el menú principal
         Citizen.Wait(300)
         OpenVehicleMenu()
     end)
 end)
 
--- Dibujar marker y verificar zona
+-- ==========================================================
+-- BUCLE PRINCIPAL (OPTIMIZADO)
+-- ==========================================================
+
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(0)
-        local playerPed = PlayerPedId()
-        local playerCoords = GetEntityCoords(playerPed)
-        local distance = #(playerCoords - Config.Marker.position)
+        local wait = 1000 -- Por defecto, duerme 1 segundo (ahorra CPU)
 
-        -- Solo mostrar marker si es policía
-        local playerData = QBCore.Functions.GetPlayerData()
-        if playerData.job and playerData.job.name == Config.JobRequired then
+        -- Verificar si tiene el trabajo requerido (o si no se requiere job)
+        if not Config.JobRequired or (PlayerJob.name == Config.JobRequired) then
+            local playerPed = PlayerPedId()
+            local playerCoords = GetEntityCoords(playerPed)
+            local distance = #(playerCoords - Config.Marker.position)
+
+            -- Si está cerca, cambiamos el wait a 0 para dibujar fluido
             if distance < Config.Marker.drawDistance then
+                wait = 0
                 DrawMarker(Config.Marker.type, Config.Marker.position.x, Config.Marker.position.y,
                     Config.Marker.position.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Config.Marker.size.x, Config.Marker.size.y,
                     Config.Marker.size.z, Config.Marker.color.r, Config.Marker.color.g, Config.Marker.color.b,
                     Config.Marker.color.a, Config.Marker.saltos, Config.Marker.sigue, false, Config.Marker.rotacion,
                     false, false, false)
-            end
 
-            -- Verificar si está en la zona
-            if distance < Config.Marker.interactionDistance then
-                if not inZone then
-                    inZone = true
-                    -- Usar el sistema de texto configurado
-                    ShowTextUI(Config.Texts.drawText)
-                end
+                if distance < Config.Marker.interactionDistance then
+                    if not inZone then
+                        inZone = true
+                        ShowTextUI(Config.Texts.drawText)
+                    end
 
-                -- Interacción con la tecla E
-                if IsControlJustReleased(0, 38) then
-                    if IsPedInAnyVehicle(playerPed, false) then
-                        OpenVehicleMenu()
-                    else
-                        QBCore.Functions.Notify(Config.Texts.noVehicle, 'error')
+                    if IsControlJustReleased(0, 38) then
+                        if IsPedInAnyVehicle(playerPed, false) then
+                            OpenVehicleMenu()
+                        else
+                            QBCore.Functions.Notify(Config.Texts.noVehicle, 'error')
+                        end
+                    end
+                else
+                    if inZone then
+                        inZone = false
+                        HideTextUI()
                     end
                 end
             else
+                -- Si se aleja pero estaba en zona, limpiamos UI
                 if inZone then
                     inZone = false
-                    -- Ocultar el texto
                     HideTextUI()
                 end
             end
         else
+            -- Si cambia de trabajo y estaba en zona, limpiamos
             if inZone then
                 inZone = false
-                -- Ocultar el texto
                 HideTextUI()
             end
         end
+
+        Citizen.Wait(wait) -- Usamos el tiempo variable
     end
 end)
